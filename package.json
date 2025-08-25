@@ -1,0 +1,6 @@
+{
+    "scripts": {
+        "build": "moon build --target wasm",
+        "start": "node run_wasm.js target/wasm/release/build/main/main.wasm"
+    }
+}

@@ -1,0 +1,9 @@
+{
+  "is-main": true,
+  "import": [
+    "username/moonlearn/lib",
+    "username/moonlearn/utils",
+    "username/moonlearn/chapters/boolean",
+    "username/moonlearn/chapters/unit"
+  ]
+}

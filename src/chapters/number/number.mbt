@@ -22,6 +22,27 @@ pub fn print_number() -> Unit {
 
   }
 
+
+// MoonBit has 4 visibility levels:
+//   - priv - private (invisible outside)
+//   - default - abstract (name visible, construction hidden)
+//   - pub(readonly) - read-only (visible but no construction/mutation)
+//   - pub(all) - fully public (construct, modify, read freely)
+
+pub(all) enum CustomNumber {
+  UnsignedNumber(UInt)
+  SignedNumber(Int)
+} derive(Eq)
+
+
+pub fn addCustomNumber (a: CustomNumber, b: CustomNumber) -> CustomNumber raise Failure {
+  match (a, b) {
+    (UnsignedNumber(a), UnsignedNumber(b)) => UnsignedNumber(a + b)
+    (SignedNumber(a), SignedNumber(b)) => SignedNumber(a + b)
+    _ => raise Failure("FAILED: cannot add signed and unsigned numbers")
+  }
+}
+
 pub fn [T: Add]addAny (a: T, b: T) -> T {
   a + b
 }

@@ -1,6 +1,8 @@
 {
     "scripts": {
         "build": "moon build --target wasm",
+        "test": "moon test",
+        "run:main": "moon run src/main/main.mbt",
         "start": "node run_wasm.js target/wasm/release/build/main/main.wasm"
     }
 }

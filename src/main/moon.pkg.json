@@ -4,6 +4,12 @@
     "username/moonlearn/lib",
     "username/moonlearn/utils",
     "username/moonlearn/chapters/boolean",
-    "username/moonlearn/chapters/unit"
+    "username/moonlearn/chapters/unit",
+    "username/moonlearn/chapters/number",
+    "username/moonlearn/chapters/tuple",
+    "username/moonlearn/chapters/option",
+    "username/moonlearn/chapters/ref",
+    "username/moonlearn/chapters/string"
+    
   ]
 }

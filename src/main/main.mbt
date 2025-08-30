@@ -3,7 +3,6 @@
 fn main {
   // unit
   println(@lib.hello())
-  println(@utils.add(1, 2))
   
   @boolean.print_boolean()
   @unit.print_hello_unit()
@@ -13,6 +12,8 @@ fn main {
   println(@tuple.sum_tuple(1, 2, c=3))
   println(@ref.new(1))
   println(@string.greeting("John"))
+  println(@array.fill(1, 3))
+  println(@byte.return_literal_bytesA())
 }
 
 

@@ -7,9 +7,11 @@
     "username/moonlearn/chapters/number",
     "username/moonlearn/chapters/tuple",
     "username/moonlearn/chapters/option",
+    "username/moonlearn/chapters/result",
     "username/moonlearn/chapters/ref",
     "username/moonlearn/chapters/string",
     "username/moonlearn/chapters/array",
-    "username/moonlearn/chapters/byte"
+    "username/moonlearn/chapters/byte",
+    "username/moonlearn/chapters/json"
   ]
 }

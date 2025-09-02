@@ -7,6 +7,8 @@ fn main {
   @boolean.print_boolean()
   @unit.print_hello_unit()
   @boolean.print_boolean()
+  println(@partial_application.full_add_function(10, 20))
+  println(@map.array_to_map([1, 2, 3]))
   println(@option.some_or_default(Some(42), 0))
   println(@result.result_is_ok(Ok(42)))
   println(@number.addAny(1, 2))

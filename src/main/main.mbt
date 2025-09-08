@@ -17,6 +17,7 @@ fn main {
   println(@string.greeting("John"))
   println(@array.fill(1, 3))
   println(@byte.return_literal_bytesA())
+  println(@loop.double_array_loop([1, 2, 3, 4, 5]))
 }
 
 

@@ -14,6 +14,7 @@
     "username/moonlearn/chapters/byte",
     "username/moonlearn/chapters/json",
     "username/moonlearn/chapters/map",
-    "username/moonlearn/chapters/partial_application"
+    "username/moonlearn/chapters/partial_application",
+    "username/moonlearn/chapters/loop"
   ]
 }

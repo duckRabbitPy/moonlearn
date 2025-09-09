@@ -18,6 +18,7 @@ fn main {
   println(@array.fill(1, 3))
   println(@byte.return_literal_bytesA())
   println(@loop.double_array_loop([1, 2, 3, 4, 5]))
+  println(@defer.defer_example(@ref.new("initial value")))
 }
 
 

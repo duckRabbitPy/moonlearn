@@ -1,7 +1,18 @@
 
 
 fn main {
-  // unit
+  // Access command line arguments using env package
+  let args = @env.args()
+  println("Command line arguments:")
+  if args.length() > 0 {
+    for arg in args {
+      println("  " + arg)
+    }
+  } else {
+    println("  No arguments provided")
+  }
+  
+  // Original code
   println(@lib.hello())
   println(@json.parse_json("{\"key\": 42}"))
   @boolean.print_boolean()

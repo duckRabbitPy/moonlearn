@@ -79,7 +79,7 @@ priv struct EncodedJson {
   key: String
 }
 
-fn decode(plaintext: String) -> String {
+pub fn decode(plaintext: String) -> String {
   let json = parse_json(plaintext)
 
   let encodedJson = match json {
@@ -106,14 +106,18 @@ fn decode(plaintext: String) -> String {
         return hexCharsToByte(hexChars)
       }).collect()
 
-      let readableChars = cipherBytes.mapi((index, cipherByte) => {
+      let decryptedChars = cipherBytes.mapi((index, cipherByte) => {
         let keyByte = keyBytes[index]
         // xor the cipher byte with the key byte
         let decryptedByte = cipherByte ^ keyByte
-        decryptedByte.to_char().to_string()
-      }).join("")
-
-      return readableChars
+        decryptedByte.to_char()
+      })
+    
+      // to_char() produces UTF-16 characters with null padding.
+      // remove null characters
+      let filteredChars = decryptedChars.filter(char => char != '\u{00}')
+      let stringChars = filteredChars.map(char => char.to_string())
+      stringChars.join("")
     }
     Err(err) => "Failed to decode: " + err
   }

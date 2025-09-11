@@ -5,33 +5,44 @@ fn make_js_array() -> JsArray = "custom_module" "make_js_array"
 fn push_js_array(array : JsArray, value: Byte) -> JsArray= "custom_module" "push_js_array"
 fn append_to_key_store(array : JsArray) -> Int = "custom_module" "append_to_key_store"
 
-pub fn encode(plaintext: String) -> String {
+
+// Pure functions
+pub fn encrypt_bytes(plaintextBytes: Array[Byte], keyBytes: Array[Byte]) -> Array[Byte] {
+  plaintextBytes.mapi((index, byte) => {
+    let keyByte = keyBytes[index]
+    return byte ^ keyByte
+  })
+}
+
+pub fn bytes_to_ciphertext_string(bytes: Array[Byte]) -> String {
+  bytes.iter().map(byte => {
+    return byte.to_int().to_string()
+  }).join(":")
+}
+
+pub fn create_encrypted_json(ciphertext: String, key: String) -> String {
+  let json: Json = { "ciphertext": ciphertext, "key": key }
+  return Json::stringify(json)
+}
+
+pub fn encode_pure(plaintext: String) -> (String, Array[Byte]) {
   let plaintextBytes = plaintext.to_bytes()
   let randomGenerator = @random.Rand::new()
   let keyBytes = []
-
-  let currJsArray = make_js_array()
   
-  let cipherBytes = plaintextBytes.iter().map(byte => {
+  // Generate random keys
+  for _ in plaintextBytes.iter() {
     let keyByte = randomGenerator.int(limit=256)
     keyBytes.push(keyByte.to_byte())
-    // xor the byte with the key byte
-    return byte ^ keyByte.to_byte()
-  })
-
-  let ciphertextString = cipherBytes.iter().map(byte => {
-    return byte.to_int().to_string()
-  }).join(":")
-
-  let keyString = keyBytes.iter().map(byte => {
-    let _ = push_js_array(currJsArray, byte)
-    return  byte.to_int().to_string()
-  }).join(":")
-
-  let _ = append_to_key_store(currJsArray)
-
-  let json: Json = { "ciphertext": ciphertextString, "key": keyString }
-  return Json::stringify(json)
+  }
+  
+  let plaintextArray = plaintextBytes.iter().collect()
+  let cipherBytes = encrypt_bytes(plaintextArray, keyBytes)
+  let ciphertextString = bytes_to_ciphertext_string(cipherBytes)
+  let keyString = bytes_to_ciphertext_string(keyBytes)
+  
+  let jsonStr = create_encrypted_json(ciphertextString, keyString)
+  return (jsonStr, keyBytes)
 }
 
 fn parse_string_to_int(s: String) -> Int {
@@ -63,51 +74,73 @@ fn parse_json(jsonStr: String) -> Result[Json, String] {
   }
 }
 
-priv struct EncodedJson {
-  ciphertext: String
-  key: String
+
+pub fn ciphertext_string_to_bytes(ciphertextString: String) -> Array[Byte] {
+  ciphertextString.split(":").map(strInt => {
+    return parse_string_to_int(strInt.to_string()).to_byte()
+  }).collect()
 }
 
-pub fn decode(plaintext: String) -> String {
-  let json = parse_json(plaintext)
+pub fn decrypt_bytes(cipherBytes: Array[Byte], keyBytes: Array[Byte]) -> Array[Byte] {
+  cipherBytes.mapi((index, cipherByte) => {
+    let keyByte = keyBytes[index]
+    return cipherByte ^ keyByte
+  })
+}
 
-  let encodedJson = match json {
+pub fn decrypted_bytes_to_string(decryptedBytes: Array[Byte]) -> String {
+  let decryptedChars = decryptedBytes.map(byte => {
+    byte.to_char()
+  })
+  
+  // to_char() produces UTF-16 characters with null padding.
+  // remove null characters
+  let filteredChars = decryptedChars.filter(char => char != '\u{00}')
+  let stringChars = filteredChars.map(char => char.to_string())
+  stringChars.join("")
+}
+
+
+pub fn decode_else_error(jsonStr: String) -> Result[String, String] {
+  let json = parse_json(jsonStr)
+  
+  match json {
     Ok(json) => {
       let ciphertextString = json.value("ciphertext").unwrap().as_string().unwrap()
       let keyString = json.value("key").unwrap().as_string().unwrap()
-      Ok(EncodedJson::{ ciphertext: ciphertextString, key: keyString })
+      
+      let cipherBytes = ciphertext_string_to_bytes(ciphertextString)
+      let keyBytes = ciphertext_string_to_bytes(keyString)
+      
+      let decryptedBytes = decrypt_bytes(cipherBytes, keyBytes)
+      let result = decrypted_bytes_to_string(decryptedBytes)
+      
+      Ok(result)
     }
-    Err(err) => Err(err)
+    Err(err) => Err("Failed to parse JSON: " + err)
   }
+}
 
-  match encodedJson {
-    Ok(encodedJson) => {
-      let ciphertextString = encodedJson.ciphertext
-      let keyString = encodedJson.key
-
-      let cipherBytes = ciphertextString.split(":").map(strInt => {
-        return parse_string_to_int(strInt.to_string()).to_byte()
-      }).collect()
-
-      let keyBytes = keyString.split(":").map(strInt => {
-        return parse_string_to_int(strInt.to_string()).to_byte()
-      }).collect()
-
-      let decryptedChars = cipherBytes.mapi((index, cipherByte) => {
-        let keyByte = keyBytes[index]
-        // xor the cipher byte with the key byte
-        let decryptedByte = cipherByte ^ keyByte
-        decryptedByte.to_char()
-      })
-    
-      // to_char() produces UTF-16 characters with null padding.
-      // remove null characters
-      let filteredChars = decryptedChars.filter(char => char != '\u{00}')
-      let stringChars = filteredChars.map(char => char.to_string())
-      stringChars.join("")
-    }
+pub fn decode(plaintext: String) -> String {
+  match decode_else_error(plaintext) {
+    Ok(result) => result
     Err(err) => "Failed to decode: " + err
   }
+}
+
+
+// !! Has side effects, calls ffi functions
+pub fn encode(plaintext: String) -> String {
+  let (jsonStr, keyBytes) = encode_pure(plaintext)
+  
+  // FFI side effects
+  let currJsArray = make_js_array()
+  for keyByte in keyBytes.iter() {
+    let _ = push_js_array(currJsArray, keyByte)
+  }
+  let _ = append_to_key_store(currJsArray)
+  
+  return jsonStr
 }
 
 pub fn handle_code_command() -> Unit {

@@ -1,7 +1,16 @@
+// FFI Javascript functions
+#external
+priv type JsArray
+fn make_js_array() -> JsArray = "custom_module" "make_js_array"
+fn push_js_array(array : JsArray, value: Byte) -> JsArray= "custom_module" "push_js_array"
+fn append_to_key_store(array : JsArray) -> Int = "custom_module" "append_to_key_store"
+
 pub fn encode(plaintext: String) -> String {
   let plaintextBytes = plaintext.to_bytes()
   let randomGenerator = @random.Rand::new()
   let keyBytes = []
+
+  let currJsArray = make_js_array()
   
   let cipherBytes = plaintextBytes.iter().map(byte => {
     let keyByte = randomGenerator.int(limit=256)
@@ -11,59 +20,39 @@ pub fn encode(plaintext: String) -> String {
   })
 
   let ciphertextString = cipherBytes.iter().map(byte => {
-    let hexValue = byte.to_int()
-    intToHex(hexValue)
+    return byte.to_int().to_string()
   }).join(":")
-  
+
   let keyString = keyBytes.iter().map(byte => {
-    let hexValue = byte.to_int()
-    intToHex(hexValue)
+    let _ = push_js_array(currJsArray, byte)
+    return  byte.to_int().to_string()
   }).join(":")
+
+  let _ = append_to_key_store(currJsArray)
 
   let json: Json = { "ciphertext": ciphertextString, "key": keyString }
   return Json::stringify(json)
 }
 
-fn intToHex(value: Int) -> String {
-  let hexChars = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F']
-  let high = value / 16
-  let low = value % 16
-  let highChar = hexChars[high]
-  let lowChar = hexChars[low]
-  highChar.to_string() + lowChar.to_string()
-}
-
-fn hexCharsToByte(hexChars: Array[Char]) -> Byte {
+fn parse_string_to_int(s: String) -> Int {
   let mut result = 0
-    for char in hexChars.iter() {
-      let digit = match char {
-        '0' => 0
-        '1' => 1
-        '2' => 2
-        '3' => 3
-        '4' => 4
-        '5' => 5
-        '6' => 6
-        '7' => 7
-        '8' => 8
-        '9' => 9
-        'A' => 10
-        'B' => 11
-        'C' => 12
-        'D' => 13
-        'E' => 14
-        'F' => 15
-        'a' => 10
-        'b' => 11
-        'c' => 12
-        'd' => 13
-        'e' => 14
-        'f' => 15
-        _ => 0
-      }
-      result = result * 16 + digit
+  for char in s.iter() {
+    let digit = match char {
+      '0' => 0
+      '1' => 1
+      '2' => 2
+      '3' => 3
+      '4' => 4
+      '5' => 5
+      '6' => 6
+      '7' => 7
+      '8' => 8
+      '9' => 9
+      _ => 0
     }
-  return result.to_byte()
+    result = result * 10 + digit
+  }
+  return result
 }
 
 fn parse_json(jsonStr: String) -> Result[Json, String] {
@@ -96,14 +85,12 @@ pub fn decode(plaintext: String) -> String {
       let ciphertextString = encodedJson.ciphertext
       let keyString = encodedJson.key
 
-      let cipherBytes = ciphertextString.split(":").map(hexStr => {
-        let hexChars = hexStr.to_string().to_array()
-        return hexCharsToByte(hexChars)
+      let cipherBytes = ciphertextString.split(":").map(strInt => {
+        return parse_string_to_int(strInt.to_string()).to_byte()
       }).collect()
 
-      let keyBytes = keyString.split(":").map(hexStr => {
-        let hexChars = hexStr.to_string().to_array()
-        return hexCharsToByte(hexChars)
+      let keyBytes = keyString.split(":").map(strInt => {
+        return parse_string_to_int(strInt.to_string()).to_byte()
       }).collect()
 
       let decryptedChars = cipherBytes.mapi((index, cipherByte) => {

@@ -1,4 +1,4 @@
-{
+{    
     "scripts": {
         "build": "moon build --target wasm",
         "test": "moon test",

@@ -26,6 +26,25 @@ const imports = {
   env: {
     args: () => argsStrings
   },
+  // my custom ffi module
+  custom_module: {
+    push_js_array: (array, value) => {
+      array.push(value);
+      return array;
+    },
+    make_js_array: () => {
+      return [];
+    },
+    append_to_key_store: (array) => {
+      try {
+        fs.appendFileSync("key_store.txt", "\n" + array.join(":"));
+        return 1;
+      } catch (error) {
+        console.error("Error appending to key store:", error);
+        return 0;
+      }
+    }
+  },
   __moonbit_fs_unstable: {
     // String operations
     begin_read_string: (externString) => {

@@ -1,7 +1,6 @@
 {
   "is-main": true,
   "import": [
-    "username/moonlearn/lib",
     "username/moonlearn/chapters/boolean",
     "username/moonlearn/chapters/unit",
     "username/moonlearn/chapters/number",
@@ -16,6 +15,7 @@
     "username/moonlearn/chapters/map",
     "username/moonlearn/chapters/partial_application",
     "username/moonlearn/chapters/loop",
-    "username/moonlearn/chapters/defer"
+    "username/moonlearn/chapters/defer",
+    "username/moonlearn/code"
     ]
 }

@@ -35,10 +35,18 @@ const imports = {
     make_js_array: () => {
       return [];
     },
+    read_cipher_from_file: (lineNumber) => {
+      const lines = fs.readFileSync("key_store.txt", "utf8").split("\n");
+      return lines[lineNumber] || "";
+    },
+    get_byte_from_js_string: (jsString, index) => {
+      const bytes = jsString.split(":");
+      return parseInt(bytes[index] || "0");
+    },
     append_to_key_store: (array) => {
       try {
-        fs.appendFileSync("key_store.txt", "\n" + array.join(":"));
-        return 1;
+        fs.appendFileSync("key_store.txt", array.join(":") + "\n");
+        return fs.readFileSync("key_store.txt", "utf8").split("\n").length;
       } catch (error) {
         console.error("Error appending to key store:", error);
         return 0;

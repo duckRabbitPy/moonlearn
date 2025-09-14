@@ -1,5 +1,5 @@
 pub fn result_is_ok(result: Result[Int, String]) -> Bool {
-  return result.is_ok()
+  return result is Ok(_)
 }
 
 pub fn result_is_ok2(result: Result[Int, String]) -> Bool {
@@ -10,7 +10,7 @@ pub fn result_is_ok2(result: Result[Int, String]) -> Bool {
 }
 
 pub fn result_is_err(result: Result[Int, String]) -> Bool {
-  return result.is_err()
+  return result is Err(_)
 }
 
 

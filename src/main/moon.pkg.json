@@ -16,6 +16,7 @@
     "username/moonlearn/chapters/partial_application",
     "username/moonlearn/chapters/loop",
     "username/moonlearn/chapters/defer",
-    "username/moonlearn/code"
+    "username/moonlearn/code",
+    "username/moonlearn/wasmIO"
     ]
 }

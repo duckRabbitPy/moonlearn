@@ -51,6 +51,30 @@ const imports = {
         console.error("Error appending to key store:", error);
         return 0;
       }
+    },
+    // for parse program
+    read_string_from_file: () => {
+      return fs.readFileSync("string_store.txt", "utf8");
+    },
+    write_to_string_store: (s) => {
+      fs.writeFileSync("string_store.txt", s);
+    },
+    js_string_length: (s) => {
+      return s.length;
+    },
+    js_string_char_at: (s, i) => {
+      return s.charCodeAt(i);
+    },
+    make_js_byte_array: () => {
+      return [];
+    },
+    push_to_js_byte_array: (byteArray, byte) => {
+      byteArray.push(byte);
+      return byteArray;
+    },
+    write_byte_array_to_string_store: (byteArray) => {
+      const str = String.fromCharCode(...byteArray);
+      fs.writeFileSync("string_store.txt", str);
     }
   },
   __moonbit_fs_unstable: {

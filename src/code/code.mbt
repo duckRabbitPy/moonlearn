@@ -164,10 +164,16 @@ pub fn encode(plaintext: String) -> String {
 
 pub fn handle_code_command() -> Unit {
   let args = @env.args()
+
+  if(args.length() < 1) {
+    println("Invalid number of arguments!")
+    return
+  }
+
   let flag = args[0]
   let plaintext = args.split_at(1).1.join(" ")
 
- let result = match flag {
+  let result = match flag {
     "-e" => encode(plaintext) // e.g. "Hello"
     "-d" => decode(plaintext) // json string e.g '{"ciphertext":"205:60:25:214:193:121:82:79:201:106","id":4}'
     _ => "Invalid flag"

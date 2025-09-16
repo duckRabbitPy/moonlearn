@@ -16,6 +16,8 @@ let stringArrayHandleCounter = 0;
 const stringHandles = new Map();
 const stringArrayHandles = new Map();
 
+let inMemoryString = "inital in memory string";
+
 // Create a comprehensive WASM runtime
 const imports = {
   spectest: {
@@ -55,6 +57,16 @@ const imports = {
     // for parse program
     read_string_from_file: () => {
       return fs.readFileSync("string_store.txt", "utf8");
+    },
+    read_in_memory_string: () => {
+      return inMemoryString;
+    },
+    write_to_in_memory_string: (s) => {
+      const str = String.fromCharCode(...s);
+      inMemoryString = str;
+    },
+    print_in_memory_string: () => {
+      console.log(inMemoryString);
     },
     write_to_string_store: (s) => {
       fs.writeFileSync("string_store.txt", s);

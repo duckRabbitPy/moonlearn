@@ -11,6 +11,9 @@ fn make_js_byte_array() -> JsByteArray = "custom_module" "make_js_byte_array"
 fn push_to_js_byte_array(byteArray: JsByteArray, byte: Byte) -> JsByteArray = "custom_module" "push_to_js_byte_array"
 fn write_byte_array_to_string_store(byteArray: JsByteArray) -> Unit = "custom_module" "write_byte_array_to_string_store"
 
+fn read_in_memory_string() -> JsString = "custom_module" "read_in_memory_string"
+fn write_to_in_memory_string(s: JsByteArray) -> Unit = "custom_module" "write_to_in_memory_string"
+fn print_in_memory_string() -> Unit = "custom_module" "print_in_memory_string"
 
 // construct moonbit string from js string
 fn js_string_to_string(s: JsString) -> String {
@@ -43,4 +46,13 @@ pub fn alter_string_from_file() -> Unit {
   println(str)
 }
 
+
+pub fn alter_string_from_memory() -> Unit {
+  let jsString = read_in_memory_string()
+  let str = js_string_to_string(jsString)
+
+  let byteArray = build_js_byte_array_from_string(str.add(" with a sprinkle of moonbit"))
+  write_to_in_memory_string(byteArray)
+  print_in_memory_string()
+}
 

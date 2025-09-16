@@ -3,6 +3,7 @@
 fn main {
   @wasmIO.alter_string_from_file()
   @code.handle_code_command()
+  @wasmIO.alter_string_from_memory()
 }
 
 

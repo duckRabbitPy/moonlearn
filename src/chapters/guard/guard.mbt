@@ -5,7 +5,7 @@ pub(all) struct User {
   verified : Bool
 }
 
-pub struct Profile {
+pub(all) struct Profile {
   name : String
   email : String
 } derive(Eq, Show)

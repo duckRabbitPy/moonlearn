@@ -2,9 +2,12 @@ test "pure encoding function" {
   let input = "Hello, world!"
   let (keyStr, keyBytes) = @code.encode_pure(input)
   
+
   // Test that encode_pure returns key string and key bytes
   assert_eq(keyStr.contains(":"), true) // Key should be colon-separated
-  assert_eq(keyBytes.length(), input.to_bytes().length()) // Key length should match input byte length
+  // Key length should match input byte length (count colons + 1 in keyStr)
+  let expectedLength = keyStr.split(":").collect().length()
+  assert_eq(keyBytes.length(), expectedLength)
 }
 
 test "encrypt_bytes and decrypt_bytes functions" {

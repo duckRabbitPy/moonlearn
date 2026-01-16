@@ -32,12 +32,11 @@ pub fn create_encrypted_json(ciphertext: String, key: String) -> String {
 
 
 pub fn encode_pure(plaintext: String) -> (String, Array[Byte]) {
-  let plaintextBytes = plaintext.to_bytes()
   let randomGenerator = @random.Rand::new()
   let keyBytes = []
   
-  // Generate random keys
-  for _ in plaintextBytes.iter() {
+  // Generate random keys - one per character in the string
+  for _ in plaintext.iter() {
     let keyByte = randomGenerator.int(limit=256)
     keyBytes.push(keyByte.to_byte())
   }
@@ -112,8 +111,22 @@ pub fn decode_else_error(jsonStr: String) -> Result[String, String] {
   
   match json {
     Ok(json) => {
-      let lineNumber = json.value("id").unwrap().as_number().unwrap().to_int()
-      let ciphertextString = json.value("ciphertext").unwrap().as_string().unwrap()
+      let lineNumber = if json is Object(obj) {
+        match obj.get("id") {
+          Some(Number(n, ..)) => n.to_int()
+          _ => return Err("id field is not a number")
+        }
+      } else {
+        return Err("JSON is not an object")
+      }
+      let ciphertextString = if json is Object(obj) {
+        match obj.get("ciphertext") {
+          Some(String(s)) => s
+          _ => return Err("ciphertext field is not a string")
+        }
+      } else {
+        return Err("JSON is not an object")
+      }
       
       let cipherBytes = ciphertext_string_to_bytes(ciphertextString)
       
@@ -136,17 +149,16 @@ pub fn decode(plaintext: String) -> String {
 
 // !! Has side effects, calls ffi functions
 pub fn encode(plaintext: String) -> String {
-  let plaintextBytes = plaintext.to_bytes()
   let randomGenerator = @random.Rand::new()
   let keyBytes = []
   
-  // Generate random keys
-  for _ in plaintextBytes.iter() {
+  // Generate random keys - one per character in the string
+  for _ in plaintext.iter() {
     let keyByte = randomGenerator.int(limit=256)
     keyBytes.push(keyByte.to_byte())
   }
   
-  let plaintextArray = plaintextBytes.iter().collect()
+  let plaintextArray = plaintext.iter().map(char => char.to_int().to_byte()).collect()
   let cipherBytes = encrypt_bytes(plaintextArray, keyBytes)
   
   // Store KEY bytes in file (for later retrieval)
@@ -171,7 +183,7 @@ pub fn handle_code_command() -> Unit {
   }
 
   let flag = args[0]
-  let plaintext = args.split_at(1).1.join(" ")
+  let plaintext = args[1:].join(" ")
 
   let result = match flag {
     "-e" => encode(plaintext) // e.g. "Hello"

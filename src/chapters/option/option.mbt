@@ -30,5 +30,5 @@ pub fn filter_some(someArray : Array[Int?]) -> Array[Int] {
 }
 
 pub fn flatten_double_nested_option(nestedSome: Option[Option[Option[Int]]]) -> Option[Int] {
-  return nestedSome.flatten().flatten()
+  return nestedSome.bind(x => x.bind(y => y.bind(z => Some(z))))
 }

@@ -4,8 +4,15 @@ test "parse_json" {
   let result = @json.parse_json(json_string)
   match result {
     Ok(json) => {
-      let key_option = json.value("key").unwrap().as_number()
-      assert_eq(key_option, Some(42))
+      let key_option = if json is Object(obj) {
+        match obj.get("key") {
+          Some(Number(n, ..)) => Some(n)
+          _ => None
+        }
+      } else {
+        None
+      }
+      assert_eq(key_option, Some(42.0))
     }
     Err(error) => fail(error)
   }

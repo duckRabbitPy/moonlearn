@@ -24,15 +24,18 @@ pub(all) enum ItemType {
 } derive(Eq, Show)
 
 fn json_to_item_type(json: Json) -> Result[ItemType, String] {
-  if(json.as_number() is Some(_)) {
-    return Ok(ItemType::ItemNumber(json.as_number().unwrap()))
+  if json is Number(n, ..) {
+    return Ok(ItemType::ItemNumber(n))
   }
-  if(json.as_string() is Some(_)) {
-    return Ok(ItemType::ItemString(json.as_string().unwrap()))
+  if json is String(s) {
+    return Ok(ItemType::ItemString(s))
   } 
-  if(json.as_bool() is Some(_)) {
-    return Ok(ItemType::ItemBool(json.as_bool().unwrap()))
-  } 
+  if json is True {
+    return Ok(ItemType::ItemBool(true))
+  }
+  if json is False {
+    return Ok(ItemType::ItemBool(false))
+  }
   else {
     return Err("Unsupported type")
   }
@@ -43,7 +46,8 @@ pub fn getItemAtJsonStringIndex(jsonStr: String, index: Int) -> Result[ItemType,
   
   match maybeArray {
     Ok(array) => {
-      match array.item(index) {
+      let item = if array is Array(arr) { arr.get(index) } else { None }
+      match item {
         Some(item) => json_to_item_type(item)
         None => Err("No item at index")
       }

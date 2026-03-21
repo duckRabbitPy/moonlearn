@@ -47,6 +47,12 @@ pub impl Draw for Triangle with draw(self, x, y) {
   println("Drawing triangle with base \{self.base} and height \{self.height} at position (\{x}, \{y})")
 }
 
+pub impl Object for Circle
+
+pub impl Object for Square
+
+pub impl Object for Triangle
+
 pub fn test_shapes() -> Unit {
 
 }

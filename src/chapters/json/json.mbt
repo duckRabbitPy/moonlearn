@@ -1,5 +1,5 @@
 pub fn parse_json(jsonStr: String) -> Result[Json, String] {
-  let res = try? (@json.parse(jsonStr)) 
+  let res = try? (@core_json.parse(jsonStr))
   match res {
     Ok(json) => Ok(json)
     Err(_) => Err("Failed to parse JSON")
@@ -8,7 +8,7 @@ pub fn parse_json(jsonStr: String) -> Result[Json, String] {
 
 
 pub fn is_valid_json_string(jsonStr: String) -> Bool {
-  return @json.valid(jsonStr)
+  return @core_json.valid(jsonStr)
 }
 
 

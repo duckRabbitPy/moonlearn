@@ -1,3 +1,4 @@
 {
-    "name": "json"
+  "name": "json",
+  "import": [{ "path": "moonbitlang/core/json", "alias": "core_json" }]
 }

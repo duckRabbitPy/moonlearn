@@ -1,0 +1,7 @@
+{
+  "name": "async-functions",
+  "import": [
+    { "path": "moonbitlang/async", "alias": "async" },
+    { "path": "moonbitlang/async/http", "alias": "http" }
+  ]
+}

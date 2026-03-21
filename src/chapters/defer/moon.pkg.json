@@ -1,3 +1,4 @@
 {
-    "name": "defer"
+  "name": "defer",
+  "import": [{ "path": "moonbitlang/core/ref", "alias": "core_ref" }]
 }

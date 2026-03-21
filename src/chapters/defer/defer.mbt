@@ -1,3 +1,7 @@
+pub fn string_ref(s: String) -> Ref[String] {
+  @core_ref.new(s)
+}
+
 pub fn update_reference(reference: Ref[String]) -> Unit {
   reference.val = "updated value"
 }

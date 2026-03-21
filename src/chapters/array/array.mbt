@@ -18,7 +18,7 @@ pub fn sortNumbers(numbers : Array[Int], order : SortOrder) -> Array[Int] {
   match order {
     Ascending => sorted
     Descending => {
-      sorted.rev_inplace();
+      sorted.rev_in_place();
       return sorted
     }
   }

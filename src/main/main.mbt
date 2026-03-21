@@ -1,15 +1,6 @@
 
 
 fn main {
-  // FFI-dependent functions commented out for tests
-  // These require custom_module imports that aren't available in test environment
-  // @wasmIO.alter_string_from_file()
-  // @code.handle_code_command()
-  // @wasmIO.alter_string_from_memory()
-}
-
-
-pub fn use_packages() -> Unit {
   println(@json.parse_json("{\"key\": 42}"))
   @boolean.print_boolean()
   @unit.print_hello_unit()
